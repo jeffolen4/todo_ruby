@@ -7,32 +7,49 @@ class List
   attr_accessor :name
   attr_accessor :id
 
-  def initialize( name, id = nil )
-    @name = name
-    @id = id
+  def initialize( list  )
+    if list["id"] == nil
+      @id = 0
+      @name = list["name"]
+    else
+      @id = list["id"].to_i
+      if list["name"] == nil
+        self.get_list_by_id
+      end
+    end
   end
 
   def self.all
     results = DB.exec("select * from lists;")
     lists = []
     results.each do |result|
-      name = result['name']
-      id = result['id'].to_i
-      lists << List.new(name, id )
+      lists << List.new( result )
     end
     return lists
   end
 
-  def name= name
-    @name = name
+  def get_list_by_id
+    result = DB.exec("select * from lists where id = #{self.id}")
+    self.name = result.first["name"]
   end
 
-    def id= id
-      @id = id
+  def get_tasks_by_id
+    @tasks = []
+    results = DB.exec("select * from tasks where list_id = #{self.id}")
+    results.each do |result|
+      @tasks << Task.new(result)
     end
+    return @tasks
+  end
+
+  def update
+    return DB.exec("update lists set name = #{@name} where id = #{@id}")
+  end
 
   def save
-    @id = DB.exec("insert into lists ( name ) values ('#{@name}') RETURNING id;")
+    result = DB.exec("insert into lists ( name ) values ('#{@name}') RETURNING id;")
+    @id = result.first["id"].to_i
+    return @id
   end
 
   def ==(another_list)

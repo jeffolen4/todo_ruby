@@ -1,6 +1,6 @@
 require "pg"
-require "list"
-require "task"
+require_relative "../list"
+require_relative "../task"
 
 DB = PG.connect( :dbname => "todo_test")
 

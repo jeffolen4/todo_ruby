@@ -6,7 +6,7 @@ require 'pg'
 Bundler.require
 
 # set :views, File.dirname(__FILE__) + "/views"
-set :root, './lib'
+set :root, './'
 
 require './todo'
 run Todo
