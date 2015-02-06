@@ -1,0 +1,16 @@
+<div class="row" id="row-1">
+
+  <div class="container col-sm-5 newlist ">
+    <div class="row">
+      <h4>Select List</h4>
+      <select id="selectlist">
+        <% List.all.each do |list| %>
+        <option value="<%= list.id %>"><%= list.name %></option>
+        <% end %>
+        </select>
+        <!-- <button type="button" id="addtype" class="btn btn-primary">New list type</button>
+        -->
+      </div>
+  </div>
+
+</div> <!-- complete the first screen row -->
