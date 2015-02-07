@@ -8,14 +8,13 @@
         <option value="<%= list.id %>"><%= list.name %></option>
         <% end %>
       </select>
-      <!-- <button type="button" id="addtype" class="btn btn-primary">New list type</button>
-        -->
     </div>
     <div class="row">
-
-        <h4>Add new List</h4>
-
-
+      <h4>Add new List</h4>
+      <form method="post" action="/addlist">
+        <input class="form-group" id="list_name" type="text" />
+        <button type="submit" id="addtype" class="btn btn-primary">New list type</button>
+      </form>
     </div>
   </div>
 

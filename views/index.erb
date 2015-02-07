@@ -1,0 +1,44 @@
+<div class="row">
+
+  <div class="col-sm-5">
+
+    <h4>Select List</h4>
+    <select id="selectlist">
+      <% List.all.each do |list| %>
+      <option value="<%= list.id %>"><%= list.name %></option>
+      <% end %>
+    </select>
+
+    <h4>Add new List</h4>
+    <form method="post" action="/addlist">
+      <input class="form-group" id="name" name="name" type="text" />
+      <button type="submit" id="addtype" class="btn btn-primary">New list type</button>
+    </form>
+
+  </div>
+
+  <div class="col-sm-7">
+
+    <table class="table table-hover">
+      <thead>
+        <tr><th>Id</th><th>Name</th></tr>
+      </thead>
+      <tfoot>
+        <tr><td colspan="2"><button class="btn btn-primary" type="submit">Add Task</button></td></tr>
+      </tfoot>
+      <tbody>
+        <% current_list = List.all.first
+        if !(current_list == nil)
+          current_list.get_tasks_by_id
+          if current_list.tasks.length > 0
+            current_list.tasks.each do |task| %>
+            <tr><td><%= task.id %></td><td><%= task.name %></td></tr>
+            <%    end
+          end
+        end %>
+      </tbody>
+    </table>
+
+  </div>
+
+</div>

@@ -30,13 +30,13 @@ class Task
   end
 
   def get_task_by_id
-    result = DB.exec("select * from tasks where id = #{self.id}")
+    result = DB.exec("select * from tasks where id = #{@id}")
     @name = result.first["description"]
     @list_id = result.first["list_id"].to_i
   end
 
   def update
-    result = DB.exec("update tasks set description = '#{@name}', list_id = #{@list_id} where id = #{self.id}")
+    result = DB.exec("update tasks set description = '#{@name}', list_id = #{@list_id} where id = #{@id}")
   end
 
   def save

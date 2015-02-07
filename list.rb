@@ -1,11 +1,10 @@
 require 'pg'
 require_relative 'task'
 
-DB = PG.connect(:dbname => "todo_test")
+# DB = PG.connect(:dbname => "todo_test")
 
 class List
-  attr_accessor :name
-  attr_accessor :id
+  attr_accessor :name, :tasks, :id
 
   def initialize( list  )
     if list["id"] == nil
@@ -15,6 +14,8 @@ class List
       @id = list["id"].to_i
       if list["name"] == nil
         self.get_list_by_id
+      else
+        @name = list["name"]
       end
     end
   end
@@ -29,13 +30,13 @@ class List
   end
 
   def get_list_by_id
-    result = DB.exec("select * from lists where id = #{self.id}")
+    result = DB.exec("select * from lists where id = #{@id}")
     self.name = result.first["name"]
   end
 
   def get_tasks_by_id
     @tasks = []
-    results = DB.exec("select * from tasks where list_id = #{self.id}")
+    results = DB.exec("select * from tasks where list_id = #{@id}")
     results.each do |result|
       @tasks << Task.new(result)
     end
@@ -53,7 +54,11 @@ class List
   end
 
   def ==(another_list)
-    self.name == another_list.name
+    if ( another_list != nil )
+      return self.name == another_list.name
+    else
+      return false
+    end
   end
 
 end

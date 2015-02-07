@@ -1,14 +1,37 @@
 require 'sinatra'
-require_relative 'list'
+
+require_relative './list'
 
 set :public_folder, 'public'
 
+DB = PG.connect( :dbname => "todo_test")
+
 class Todo < Sinatra::Application
+  set :layout, 'layout'
 
   get '/' do
-    #current_list = List.all.first
+    current_list = nil
+    if List.all.count > 0
+      current_list = List.all.first
+    end
     erb(:index)
   end
+
+  get '/selectlist/:id' do
+    raise params.inspect
+  end
+
+  post '/addlist' do
+    new_list = List.new(params)
+    if new_list.save
+      if List.all.count > 0
+        current_list = List.all.first
+      end
+    end
+    erb(:index)
+  end
+
+
 
   # get '/merch' do
   #   erb(:merch)
