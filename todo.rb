@@ -9,46 +9,42 @@ DB = PG.connect( :dbname => "todo_test")
 class Todo < Sinatra::Application
   set :layout, 'layout'
 
+  @@lists = []
+  @@tasks = []
+  @@current_list = nil
+
   get '/' do
-    current_list = nil
-    if List.all.count > 0
-      current_list = List.all.first
+    @@lists = List.all
+    if @@lists.count > 0
+      @@current_list = @@lists.first
     end
-    erb(:index)
+    erb :index, :locals => { :lists => @@lists, :current_list => @@current_list }
   end
 
   get '/selectlist/:id' do
-    raise params.inspect
+    @@current_list = List.new({ "id" => params['id'] })
+    erb :index, :locals => { :lists => @@lists, :current_list => @@current_list }
   end
 
   post '/addlist' do
     new_list = List.new(params)
     if new_list.save
-      if List.all.count > 0
-        current_list = List.all.first
-      end
+      @@lists = List.all
     end
-    erb(:index)
+    erb :index, :locals => { :lists => @@lists, :current_list => @@current_list }
   end
 
+  post '/addtask' do
+    new_task = Task.new(params)
+    new_task.save
+    erb :index, :locals => { :lists => @@lists, :current_list => @@current_list }
+  end
 
-
-  # get '/merch' do
-  #   erb(:merch)
-  # end
-  #
-  # get '/madlib-form' do
-  #   erb(:form)
-  # end
-  #
-  # get '/madlib-story' do
-  #   @person1 = params.fetch('person1', "{no person1}")
-  #   @person2 = params.fetch('person2', "{no person2}")
-  #   @animal = params.fetch('animal', "{no animal}")
-  #   @exclamation = params.fetch('exclamation', "{no explamation}")
-  #   @verb = params.fetch('verb', "{no verb}")
-  #   @noun = params.fetch('noun', "{no noun}")
-  #   erb(:story)
-  # end
+    post '/updtask' do
+      raise ArgumentError, { "params" => params }
+      # new_task = Task.new(params)
+      # new_task.save
+      erb :index, :locals => { :lists => @@lists, :current_list => @@current_list }
+    end
 
 end

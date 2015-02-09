@@ -4,8 +4,9 @@
 
     <h4>Select List</h4>
     <select id="selectlist">
-      <% List.all.each do |list| %>
-      <option value="<%= list.id %>"><%= list.name %></option>
+      <% lists.each do |list| %>
+      <option value="<%= list.id %>"
+        <% if list.id == current_list.id %>selected<% end %>><%= list.name %></option>
       <% end %>
     </select>
 
@@ -21,23 +22,40 @@
 
     <table class="table table-hover">
       <thead>
-        <tr><th>Id</th><th>Name</th></tr>
+        <tr><th>Done?</th><th>Delete?</th><th>Id</th><th>Name</th></tr>
       </thead>
       <tfoot>
-        <tr><td colspan="2"><button class="btn btn-primary" type="submit">Add Task</button></td></tr>
+        <tr><td colspan="4"><button id="btn-upd" class="btn btn-primary" type="button">Update</button></td></tr>
       </tfoot>
       <tbody>
-        <% current_list = List.all.first
-        if !(current_list == nil)
+        <% if !(current_list == nil)
           current_list.get_tasks_by_id
           if current_list.tasks.length > 0
             current_list.tasks.each do |task| %>
-            <tr><td><%= task.id %></td><td><%= task.name %></td></tr>
+            <tr>
+              <td class="col-sm-1"><input type="checkbox" name="done" id="done<%= task.id %>" value="<%= task.id %>" /></td>
+              <td class="col-sm-1"><input type="checkbox" name="delete" id="delete<%= task.id %>" value="<%= task.id %>" /></td>
+              <td class="col-sm-1"><%= task.id %></td><td class="col-sm-5"><%= task.name %></td><td></tr>
             <%    end
           end
         end %>
       </tbody>
     </table>
+
+    <form class="form-inline" role="form" method="post" action="/addtask">
+      <div class="form-group">
+        <label for="description">New Task:</label>
+        <input type="text" name="description" class="form-control" id="description">
+      </div>
+      <div class="form-group">
+        <label for="due_date">Due Date:</label>
+        <input type="text" name="due_date" class="form-control" id="due_date">
+        <input type="hidden" name="list_id" class="form-control" id="list_id" value="<%= current_list == nil ? ' ' : current_list.id %>">
+        <button class="btn btn-primary" type="submit">Add Task</button>
+      </div>
+    </div>
+</form>
+
 
   </div>
 
