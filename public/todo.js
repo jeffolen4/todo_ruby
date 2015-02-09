@@ -8,16 +8,37 @@ $(document).ready( function () {
   });
 
   $("#btn-upd").click( function (e) {
-    var params = { "del_ids" : [], "done_ids" : [] };
+    var params = { "del_ids" : [], "done_ids" : [], "undone_ids" : [] };
     var deletes = $("[id^=delete]:checked");
-    var dones = $("[id^=done]:checked");
+    var dones = $("[id^=done]");
     deletes.each(function (idx, val) {
       params["del_ids"].push( val.value )
     });
     dones.each(function (idx, val) {
-      params["done_ids"].push( val.value )
+      if ( val.checked ) {
+        params["done_ids"].push( val.value )
+      } else {
+        params["undone_ids"].push( val.value )
+      }
     });
-    window.location.href = "/updtasks"+id;    
-  });
+
+    $.ajax({
+      type: "POST",
+      url: "/updtask",
+      data: params
+    })
+    .done(function() {
+      deletes.each ( function (idx, val) {
+        $("#task-row-" + val.value ).remove();
+      })
+      dones.each ( function ( idx, val) {
+        if ( val.checked ) {
+          $("#task-row-" + val.value ).addClass("box-checked");
+        } else {
+          $("#task-row-" + val.value ).removeClass("box-checked");
+        }
+      })
+   });
+ });
 
 })

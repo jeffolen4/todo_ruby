@@ -1,0 +1,10 @@
+.box-checked {
+  text-decoration: line-through;
+}
+
+#selectlist {
+   border: 2px solid #ccc;
+   font-size: 14px;
+   /*height: 34px; */
+   width: 200px;
+}

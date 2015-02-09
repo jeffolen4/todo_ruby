@@ -2,13 +2,15 @@ require 'pg'
 
 
 class Task
-  attr_accessor :name, :id, :list_id
+  attr_accessor :name, :id, :list_id, :done, :due_date
 
   def initialize( task )
     if task["id"] == nil
       @id = 0
       @name = task["description"]
       @list_id = task["list_id"].to_i
+      @done = false
+      @due_date = nil
     else
       @id = task["id"].to_i
       if task["list_id"] == nil
@@ -16,6 +18,8 @@ class Task
       else
         @list_id = task["list_id"].to_i
         @name = task["description"]
+        @done = task["done"]
+        @due_date = task["due_date"]
       end
     end
   end
@@ -33,6 +37,17 @@ class Task
     result = DB.exec("select * from tasks where id = #{@id}")
     @name = result.first["description"]
     @list_id = result.first["list_id"].to_i
+    @id = result.first["id"].to_i
+    @done = result.first["done"]
+    @due_date = result.first["due_date"]
+  end
+
+  def complete ( is_complete )
+    result = DB.exec("update tasks set done = #{is_complete} where id = #{@id}")
+  end
+
+  def delete
+    result = DB.exec("delete from tasks where id = #{@id}")
   end
 
   def update
@@ -40,7 +55,10 @@ class Task
   end
 
   def save
-    result = DB.exec("insert into tasks ( description, list_id ) values ('#{@name}',#{@list_id}) RETURNING id;")
+    sql_string = "insert into tasks ( description, list_id, done";
+    sql_string += @due_date == nil ? ") values ('#{@name}',#{@list_id}, #{@done} )" : ", due_date) values ('#{@name}',#{@list_id}, #{@done}, '#{@due_date}' )"
+    sql_string += " RETURNING id;"
+    result = DB.exec(sql_string)
     @id = result.first["id"].to_i
     return @id
   end
